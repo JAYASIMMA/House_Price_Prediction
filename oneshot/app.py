@@ -5,17 +5,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-# === Load model and data ===
 st.set_page_config(page_title="🏠 House Price Predictor", layout="wide")
 
 st.title("🏠 House Price Prediction App")
 st.write("Upload your data and predict house prices using a trained model.")
 
-# Load model
-model = joblib.load("oneshot_linear_model.pkl")  # or 'xgboost_model.pkl'
+model = joblib.load("oneshot_linear_model.pkl")  
 train_df = pd.read_csv("dataset/train.csv")
 
-# --- Sidebar: User Input ---
 st.sidebar.header("Enter House Details")
 numerical_cols = train_df.select_dtypes(include=["int64", "float64"]).drop(columns=["SalePrice", "Id"]).columns.tolist()
 categorical_cols = train_df.select_dtypes(include=["object"]).columns.tolist()
@@ -33,15 +30,12 @@ for col in categorical_cols:
     options = train_df[col].dropna().unique().tolist()
     user_input[col] = st.sidebar.selectbox(col, options)
 
-# Convert to DataFrame
 input_df = pd.DataFrame([user_input])
 
-# Predict
 if st.sidebar.button("Predict Price"):
     prediction = model.predict(input_df)[0]
     st.success(f"💰 Predicted Sale Price: ${prediction:,.2f}")
 
-# === Visualization ===
 st.header("📊 Exploratory Data Analysis")
 
 tab1, tab2, tab3 = st.tabs(["Histogram", "Correlation Heatmap", "Feature Importance"])
